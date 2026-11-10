@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b141e">
+  <meta name="robots" content="noindex, nofollow">
+  <title>A Little Birthday Secret</title>
+  <meta name="description" content="A little birthday surprise, just for you.">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #110c0e;
+      --cream: #f8e9ce;
+      --gold: #edbc75;
+      --muted: #ceb5a4;
+      --line: #e8af7138;
+      --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--ink); color: var(--cream); }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--cream); outline-offset: 6px; }
+
+    .stage {
+      position: relative;
+      isolation: isolate;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background:
+        radial-gradient(ellipse at 76% 45%, #69261866, transparent 52%),
+        radial-gradient(ellipse at 84% 98%, #49151a80, transparent 57%),
+        var(--ink);
+      overflow: clip;
+    }
+    .stage:not(.is-open) {
+      --cream: #f7ecf2;
+      --gold: #f1bfd4;
+      --muted: #d3bbc9;
+      --line: #efb6cf36;
+      background: radial-gradient(ellipse at 73% 42%, #4b2b46, transparent 64%), #1b141e;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: .23;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.89' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.34' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+    }
+
+    .rail, .layout { width: min(100% - 7rem, 1280px); margin-inline: auto; }
+    .rail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.55rem 0;
+      font: 700 .65rem/1.4 var(--mono);
+      letter-spacing: .19em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    header.rail { border-bottom: 1px solid var(--line); }
+    footer.rail { border-top: 1px solid var(--line); }
+    .brand, .status { display: inline-flex; align-items: center; gap: .7rem; }
+    .brand { color: var(--gold); }
+    .brand svg { width: 1.5rem; height: 1.5rem; }
+    .status::before {
+      content: "";
+      width: .39rem;
+      height: .39rem;
+      flex: none;
+      border-radius: 50%;
+      background: #ff8f53;
+      box-shadow: 0 0 12px #ff753e;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+      align-items: center;
+      gap: clamp(1.75rem, 5vw, 6rem);
+      padding-block: clamp(2.5rem, 8vh, 7rem);
+    }
+
+    .copy { position: relative; z-index: 1; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .72rem;
+      margin: 0 0 1.25rem;
+      color: var(--gold);
+      font: 700 .69rem/1.55 var(--mono);
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 1.65rem; height: 1px; background: currentColor; }
+    h1 {
+      margin: 0;
+      font: 400 clamp(3rem, 5.45vw, 6.25rem)/.97 var(--serif);
+      letter-spacing: -.057em;
+      text-wrap: balance;
+    }
+    h1 em { color: var(--gold); font-weight: 400; }
+    h1:focus-visible { outline: none; }
+    .intro {
+      max-width: 30rem;
+      margin: 1.3rem 0 1.65rem;
+      color: var(--muted);
+      font: 400 1.1rem/1.57 var(--serif);
+    }
+    .open {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2.1rem;
+      min-height: 3.5rem;
+      padding: .85rem 1.15rem;
+      border: 1px solid #fbd19b;
+      border-radius: 2px;
+      background: linear-gradient(115deg, #f7d19a, #e6a75d);
+      color: #231210;
+      box-shadow: 0 5px 26px #f89a3933;
+      font: 800 .72rem/1.3 var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      transition: box-shadow .25s;
+    }
+    .open:hover { box-shadow: 0 6px 32px #f89a3966; }
+    .open svg { width: 1.25rem; transition: transform .25s; }
+    .open:hover svg { transform: translateX(3px); }
+    .sealed .open {
+      background: linear-gradient(115deg, #f9deeb, #dfa6c2);
+      border-color: #f6cfe0;
+      box-shadow: 0 5px 26px #db86b337;
+    }
+    .sealed .open:hover { box-shadow: 0 6px 32px #db86b364; }
+
+    .envelope {
+      width: min(100%, 540px);
+      margin: 0 auto;
+      overflow: visible;
+      animation: rise .8s ease-out both;
+    }
+    .envelope .paper { filter: drop-shadow(0 18px 19px #150a15ae); }
+    .envelope .wax { filter: drop-shadow(0 3px 4px #5c263d74); }
+    .envelope .spark { transform-origin: center; animation: glow 3s ease-in-out; }
+
+    .cinema { grid-column: 1 / -1; width: 100%; text-align: center; }
+    .cinema .eyebrow { justify-content: center; }
+    .rotate-screen, .screening { animation: pan-in .65s cubic-bezier(.2,.7,.2,1) both; }
+    .rotate-screen .intro { margin-inline: auto; }
+    .rotate-symbol { width: clamp(6.5rem, 25vw, 10rem); color: var(--gold); margin-bottom: 1.6rem; }
+    .rotate-symbol .handset {
+      transform-origin: center;
+      animation: turn-phone 2.8s ease-in-out;
+      transform: rotate(90deg);
+    }
+    .stage.is-screening { grid-template-rows: 1fr; background: #080607; }
+    .is-screening > .rail { display: none; }
+    .is-screening .layout { width: min(100% - 1.5rem, 84rem); padding-block: .65rem; }
+    .screening h1 {
+      margin-bottom: .5rem;
+      color: var(--muted);
+      font: 700 .65rem/1.4 var(--mono);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .film-frame { width: min(100%, 70rem); margin-inline: auto; }
+    .film-frame iframe {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 200px;
+      background: #080607;
+      border: 1px solid var(--line);
+    }
+    .screening-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 0 1.25rem; }
+    .screening-actions .replay { display: inline-flex; align-items: center; margin-top: 0; }
+    .playback-note {
+      margin: .5rem 0 0;
+      color: var(--gold);
+      font: 400 .95rem/1.4 var(--serif);
+    }
+    @media (orientation: landscape) {
+      .film-frame { width: min(100%, 70rem, calc((100svh - 5.25rem) * 16 / 9)); }
+    }
+    @keyframes pan-in {
+      from { opacity: 0; transform: translateX(2.5rem); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes turn-phone {
+      0%, 26% { transform: rotate(0); }
+      78%, 100% { transform: rotate(90deg); }
+    }
+    .replay {
+      margin: .8rem 0 0;
+      min-height: 2.75rem;
+      padding: .3rem 0;
+      border: 0;
+      background: none;
+      color: var(--gold);
+      text-decoration: underline;
+      text-underline-offset: .3rem;
+      font: 700 .65rem/1.4 var(--mono);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .show-title { font-size: clamp(2.6rem, 4.65vw, 5.4rem); }
+    .show-title span { display: block; }
+    .show-title em { display: block; font-size: .63em; line-height: 1.15; margin-top: .14em; }
+    .ticket {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      width: min(100%, 31rem);
+      min-height: 6rem;
+      color: #301b16;
+      background:
+        repeating-linear-gradient(123deg, transparent 0 3px, #6f3a2612 3px 4px),
+        linear-gradient(120deg, #f6d9a5, #deac70);
+      box-shadow: 0 9px 40px #0007;
+      border-radius: 2px;
+    }
+    .ticket::before, .ticket::after {
+      content: "";
+      position: absolute;
+      right: 4.8rem;
+      width: .78rem;
+      height: .78rem;
+      border-radius: 50%;
+      background: #211013;
+      transform: translateX(50%);
+    }
+    .ticket::before { top: -.4rem; }
+    .ticket::after { bottom: -.4rem; }
+    .ticket-info { padding: .87rem 1rem; }
+    .ticket-label, .ticket-city, .stub span {
+      display: block;
+      font: 800 .62rem/1.4 var(--mono);
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .ticket-venue { display: block; margin: .2rem 0; font: 700 clamp(1rem, 2vw, 1.35rem)/1.15 var(--serif); }
+    .stub {
+      width: 4.8rem;
+      display: grid;
+      place-content: center;
+      gap: .15rem;
+      border-left: 1px dashed #6b472b80;
+      text-align: center;
+    }
+    .stub strong { font: 400 1.8rem/1 var(--serif); }
+
+    .art {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      max-width: 570px;
+      margin-inline: auto;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+    .art::before {
+      content: "";
+      position: absolute;
+      inset: 13%;
+      z-index: -1;
+      border-radius: 50%;
+      background: radial-gradient(circle, #a2372473 0%, #822e234d 42%, transparent 73%);
+      filter: blur(17px);
+      animation: glow 4.5s ease-in-out;
+    }
+    .art::after {
+      content: "";
+      position: absolute;
+      inset: 5%;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, transparent calc(50% - .5px), #ebaf7233 50%, transparent calc(50% + .5px)),
+        linear-gradient(transparent calc(50% - .5px), #ebaf7233 50%, transparent calc(50% + .5px));
+      mask-image: radial-gradient(circle, transparent 32%, black 70%);
+    }
+    .insignia { width: 100%; height: 100%; overflow: visible; }
+    .ticks { transform-origin: 50% 50%; animation: turn 4.5s ease-out both; }
+    .bird { filter: drop-shadow(0 0 14px #f7873966) drop-shadow(0 5px 7px #170805); }
+    .art-label {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      gap: .7rem;
+      align-items: center;
+      color: var(--muted);
+      font: 700 .59rem/1.3 var(--mono);
+      letter-spacing: .21em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .art-label::before, .art-label::after { content: ""; width: 1.4rem; height: 1px; background: var(--line); }
+    .embers, .flare { position: absolute; inset: 0; pointer-events: none; }
+    .embers { overflow: hidden; z-index: -1; }
+    .embers i {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--size);
+      height: var(--size);
+      background: #ffa467;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ff6a34;
+      opacity: .45;
+      animation: drift 5s linear var(--delay) both;
+    }
+    .flare { z-index: 2; background: radial-gradient(ellipse at 70% 47%, #ffc38166, transparent 63%); opacity: 0; }
+    .is-open .flare { animation: flare .85s ease-out both; }
+    .is-open .bird { animation: ignite 1.05s cubic-bezier(.2,.8,.2,1) both; transform-origin: center; }
+    .is-open .reveal > * { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+    .is-open .reveal > :nth-child(2) { animation-delay: .09s; }
+    .is-open .reveal > :nth-child(3) { animation-delay: .19s; }
+    .is-open .reveal > :nth-child(4) { animation-delay: .29s; }
+    .is-open .reveal > :nth-child(5) { animation-delay: .39s; }
+
+    @keyframes drift {
+      0% { opacity: 0; transform: translate3d(0, 20px, 0); }
+      20% { opacity: .75; }
+      85% { opacity: .35; }
+      100% { opacity: .32; transform: translate3d(18px, -72px, 0); }
+    }
+    @keyframes glow { 50% { opacity: .62; transform: scale(.91); } }
+    @keyframes turn { to { transform: rotate(19deg); } }
+    @keyframes flare { 23% { opacity: 1; } }
+    @keyframes ignite {
+      0% { transform: scale(.94); }
+      28% { transform: scale(1.065); filter: drop-shadow(0 0 27px #ffb559); }
+      100% { transform: scale(1); }
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+
+    @media (max-width: 820px) {
+      .rail, .layout { width: min(100% - 3rem, 580px); }
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+        align-content: center;
+        gap: 2rem;
+        padding-block: 1.5rem 2.5rem;
+      }
+      .art { grid-row: 1; width: min(82%, 360px); }
+      .envelope { grid-row: 1; width: min(91%, 370px); }
+      .copy { text-align: center; }
+      .eyebrow { justify-content: center; margin-bottom: .85rem; }
+      h1 { font-size: clamp(2.8rem, 9.6vw, 4.8rem); }
+      .show-title { font-size: clamp(2.45rem, 8.5vw, 4.25rem); }
+      .intro, .ticket { margin-inline: auto; }
+      .intro { margin-block: .9rem 1.3rem; }
+      .ticket-info { text-align: left; }
+      .stage { background-position: center top; background-image: radial-gradient(ellipse at 50% 26%, #66251d80, transparent 57%); }
+      .stage:not(.is-open) { background-image: radial-gradient(ellipse at 50% 36%, #4b2b46, transparent 62%); }
+      .rail { padding-block: 1.05rem; }
+    }
+    @media (max-width: 380px) {
+      .rail, .layout { width: calc(100% - 2rem); }
+      .rail { font-size: .59rem; letter-spacing: .12em; }
+      .layout { gap: 1.4rem; }
+      .art { width: min(77%, 245px); }
+      .art-label { font-size: .53rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="embers" hidden aria-hidden="true"></div>
+    <div class="flare" aria-hidden="true"></div>
+
+    <header class="rail">
+      <span class="brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="12" rx="1.5"/>
+          <path d="m3.5 7 8.5 6 8.5-6"/>
+        </svg>
+        Birthday post
+      </span>
+      <span class="status" hidden aria-hidden="true">Signal received</span>
+    </header>
+
+    <main class="layout">
+      <div class="copy">
+        <section class="sealed" aria-labelledby="sealed-title">
+          <p class="eyebrow">A little birthday secret</p>
+          <h1 id="sealed-title" tabindex="-1">For you, <em>my love.</em></h1>
+          <p class="intro">Happy birthday. I’ve been keeping a little secret.</p>
+          <noscript><p class="intro">Enable JavaScript to open your surprise.</p></noscript>
+          <button class="open" type="button" hidden>
+            Open your surprise
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 12h17m-6-6 6 6-6 6"/></svg>
+          </button>
+        </section>
+
+        <section class="reveal" hidden aria-labelledby="reveal-title">
+          <p class="eyebrow">Surprise. We’re going to see</p>
+          <h1 class="show-title" id="reveal-title" tabindex="-1"><span>The Hunger Games</span><em>On Stage</em></h1>
+          <p class="intro">A night at the theatre in London, just the two of us. Happy birthday, my love.</p>
+          <div class="ticket">
+            <div class="ticket-info">
+              <span class="ticket-label">Birthday night out</span>
+              <strong class="ticket-venue">Troubadour Canary Wharf Theatre</strong>
+              <span class="ticket-city">London</span>
+            </div>
+            <div class="stub">
+              <strong>02</strong>
+              <span>Guests</span>
+            </div>
+          </div>
+          <button class="replay" type="button">Replay the reveal</button>
+        </section>
+      </div>
+
+      <svg class="envelope" viewBox="0 0 520 360" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="paper" x1="92" y1="73" x2="418" y2="293" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#f7e6dd"/>
+            <stop offset="1" stop-color="#ce9bad"/>
+          </linearGradient>
+          <linearGradient id="flap" x1="260" y1="80" x2="260" y2="212" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#fff0e5"/>
+            <stop offset="1" stop-color="#ebc7ce"/>
+          </linearGradient>
+          <radialGradient id="wax" cx=".32" cy=".25" r=".8">
+            <stop stop-color="#c37a98"/>
+            <stop offset="1" stop-color="#763d5c"/>
+          </radialGradient>
+        </defs>
+        <g stroke="#e7aacb" stroke-width="1" opacity=".66">
+          <path d="M44 139V75a18 18 0 0 1 18-18h66m264 0h66a18 18 0 0 1 18 18v64m0 82v64a18 18 0 0 1-18 18h-66m-264 0H62a18 18 0 0 1-18-18v-64" stroke-opacity=".48"/>
+          <path class="spark" d="M64 85v-24m-12 12h24m388 206v-24m-12 12h24M451 96V82m-7 7h14M73 268v-14m-7 7h14"/>
+        </g>
+        <g class="paper" transform="rotate(-8 260 180)">
+          <rect x="98" y="80" width="324" height="200" rx="8" fill="url(#paper)"/>
+          <path d="m101 274 137-111a34 34 0 0 1 44 0l137 111" stroke="#995c79" stroke-opacity=".38"/>
+          <path d="M98 88a8 8 0 0 1 8-8h308a8 8 0 0 1 8 8L282 206a34 34 0 0 1-44 0Z" fill="url(#flap)" stroke="#995c79" stroke-opacity=".26"/>
+          <path d="m112 88 132 111a25 25 0 0 0 32 0L408 88" stroke="#fff3e8" stroke-opacity=".65"/>
+          <g class="wax">
+            <path d="M260 182c7-1 11 3 17 6s9 8 9 16-1 13-6 19-10 10-18 10-15-2-21-7-8-10-8-18 2-16 8-20 12-5 19-6Z" fill="url(#wax)" stroke="#e1a4bc" stroke-opacity=".58"/>
+            <circle cx="260" cy="208" r="18" stroke="#e4a3bf" stroke-opacity=".72"/>
+            <path d="M260 215c-3-2-9-6-9-10 0-5 6-6 9-2 3-4 9-3 9 2 0 4-6 8-9 10Z" fill="#f4cbda"/>
+          </g>
+        </g>
+      </svg>
+
+      <div class="art" hidden aria-hidden="true">
+        <svg class="insignia" viewBox="0 0 500 500" fill="none">
+          <defs>
+            <linearGradient id="metal" x1="130" y1="80" x2="377" y2="400" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fff1bb"/>
+              <stop offset=".26" stop-color="#e9ad5d"/>
+              <stop offset=".48" stop-color="#ffda8d"/>
+              <stop offset=".72" stop-color="#ae5c31"/>
+              <stop offset="1" stop-color="#f8bf6e"/>
+            </linearGradient>
+            <linearGradient id="rim" x1="98" y1="104" x2="386" y2="400" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ffd895"/>
+              <stop offset=".45" stop-color="#8c4028"/>
+              <stop offset=".7" stop-color="#f5ae60"/>
+              <stop offset="1" stop-color="#9f522d"/>
+            </linearGradient>
+            <radialGradient id="seal">
+              <stop stop-color="#57221d"/>
+              <stop offset="1" stop-color="#1b1012"/>
+            </radialGradient>
+          </defs>
+          <circle cx="250" cy="250" r="208" stroke="#d98c5861"/>
+          <circle class="ticks" cx="250" cy="250" r="195" stroke="#d98c5890" stroke-width="4" stroke-dasharray="1 9.21"/>
+          <circle cx="250" cy="250" r="176" stroke="#d98c5845"/>
+          <path d="M250 32v22m0 392v22M32 250h22m392 0h22M100 100l12 12m276 276 12 12m0-300-12 12M112 388l-12 12" stroke="#d58b58"/>
+          <path d="m250 31 4 7-4 7-4-7Zm212 212 4 7-4 7-4-7ZM250 455l4 7-4 7-4-7ZM38 243l4 7-4 7-4-7Z" fill="#edb776"/>
+          <circle cx="250" cy="250" r="149" fill="url(#seal)" stroke="url(#rim)" stroke-width="7"/>
+          <circle cx="250" cy="250" r="140" stroke="#e9a55c8c"/>
+          <circle cx="250" cy="250" r="154" stroke="#f4b66a48"/>
+          <g class="bird" fill="url(#metal)">
+            <!-- The arrow crosses behind the silhouette. -->
+            <path d="m112 308 255-121 3 5-255 121z"/>
+            <path d="m361 192-12-8 32-4-22 23zM127 303l-17-5-17 8 17 5zm8 2-5 16-17 8 5-16z"/>
+            <path d="M222 257c-20-22-34-45-44-68-13-29-16-55-10-80 13 23 30 44 55 59l-20-33c25 20 47 41 59 73 7-6 13-17 20-26 8-11 21-15 34-11l18 8-19 4c-7 0-12 5-17 15-6 13-8 30-16 42-13 22-36 34-66 39l-25 27 12-28-38 15 20-24-33 1 40-20z"/>
+            <path d="M269 225c22-18 46-37 60-62 11-18 15-36 15-56 12 16 15 37 8 59 9-7 19-18 25-30-4 35-24 58-46 72 13-2 23-8 32-14-18 24-47 39-83 45z"/>
+          </g>
+          <g stroke="#642918" stroke-width="2" stroke-linecap="round" opacity=".76">
+            <path d="M179 141c4 42 31 74 58 91m-46-56c9 22 22 33 38 45m-30-14c10 15 21 23 34 28m111-97c-7 38-25 56-47 73m55-37c-10 17-24 30-43 42m-98 43c21 3 41-2 51-12"/>
+          </g>
+          <circle cx="311" cy="177" r="1.8" fill="#6e2b20"/>
+          <path d="M232 343h36m-29 7h22m-16 7h10" stroke="#e4a865" stroke-linecap="round" opacity=".75"/>
+        </svg>
+        <span class="art-label">District 12 · Private dispatch</span>
+      </div>
+
+      <div class="cinema" hidden>
+        <section class="rotate-screen" hidden aria-labelledby="rotate-title">
+          <svg class="rotate-symbol" viewBox="0 0 128 128" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="64" cy="64" r="59" opacity=".25" stroke-dasharray="1 5"/>
+            <path d="M22 46a45 45 0 0 1 68-19m-2-10 4 12-12 3M106 82a45 45 0 0 1-68 19m2 10-4-12 12-3" opacity=".7" stroke-linecap="round" stroke-linejoin="round"/>
+            <g class="handset">
+              <rect x="45" y="32" width="38" height="64" rx="6" fill="#382237"/>
+              <path d="M59 39h10m-12 50h14" stroke-linecap="round"/>
+              <path d="m64 55 8 8-8 8-8-8z" fill="currentColor" stroke="none"/>
+            </g>
+          </svg>
+          <p class="eyebrow">A private screening</p>
+          <h1 id="rotate-title" tabindex="-1">Rotate your <em>phone.</em></h1>
+          <p class="intro">Turn it sideways for the best seat in the house.</p>
+          <button class="replay watch-portrait" type="button">Watch without rotating</button>
+        </section>
+
+        <section class="screening" hidden aria-labelledby="screening-title">
+          <h1 id="screening-title" tabindex="-1">Your private screening</h1>
+          <div class="film-frame"></div>
+          <p class="playback-note" role="status" hidden></p>
+          <div class="screening-actions">
+            <a class="replay" href="https://www.youtube.com/watch?v=S4MZZHm2nnc" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+            <button class="replay continue-gift" type="button">Continue to your gift →</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="rail">
+      <span>For your eyes only</span>
+      <span class="dispatch-state" aria-hidden="true">01 / Sealed</span>
+    </footer>
+  </div>
+
+  <script>
+    const stage = document.querySelector('.stage');
+    const copy = document.querySelector('.copy');
+    const sealed = document.querySelector('.sealed');
+    const reveal = document.querySelector('.reveal');
+    const envelope = document.querySelector('.envelope');
+    const art = document.querySelector('.art');
+    const embers = document.querySelector('.embers');
+    const status = document.querySelector('.status');
+    const openButton = document.querySelector('.open');
+    const replayButton = document.querySelector('.replay');
+    const dispatchState = document.querySelector('.dispatch-state');
+    const cinema = document.querySelector('.cinema');
+    const rotateScreen = document.querySelector('.rotate-screen');
+    const screening = document.querySelector('.screening');
+    const filmFrame = document.querySelector('.film-frame');
+    const playbackNote = document.querySelector('.playback-note');
+    const landscape = matchMedia('(orientation: landscape)');
+    const scenes = { sealed, rotate: rotateScreen, trailer: screening, gift: reveal };
+    let currentScene = 'sealed';
+    let player;
+    let apiScript;
+    let triedMutedPlayback = false;
+
+    function showScene(scene) {
+      currentScene = scene;
+      const gift = scene === 'gift';
+      const inCinema = scene === 'rotate' || scene === 'trailer';
+      for (const [name, panel] of Object.entries(scenes)) {
+        panel.hidden = name !== scene;
+      }
+      copy.hidden = inCinema;
+      cinema.hidden = !inCinema;
+      envelope.toggleAttribute('hidden', scene !== 'sealed');
+      art.hidden = !gift;
+      embers.hidden = !gift;
+      status.hidden = !gift;
+      stage.classList.toggle('is-open', gift);
+      stage.classList.toggle('is-screening', scene === 'trailer');
+      dispatchState.textContent = gift ? '03 / Unsealed' : inCinema ? '02 / Screening' : '01 / Sealed';
+
+      scenes[scene].querySelector('h1').focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+    }
+
+    function setPlaybackNote(message) {
+      playbackNote.textContent = message;
+      playbackNote.hidden = !message;
+    }
+
+    function revealGift() {
+      showScene('gift');
+      player?.destroy();
+      player = undefined;
+      filmFrame.replaceChildren();
+    }
+
+    function connectPlayer() {
+      const iframe = filmFrame.querySelector('iframe');
+      if (!iframe || player) return;
+
+      player = new window.YT.Player(iframe, {
+        events: {
+          onReady({ target }) {
+            if (target === player) target.playVideo();
+          },
+          onStateChange({ target, data }) {
+            if (target !== player) return;
+            if (data === window.YT.PlayerState.ENDED) revealGift();
+            if (data === window.YT.PlayerState.PLAYING) {
+              setPlaybackNote(target.isMuted() ? 'Tap the speaker in the player for sound.' : '');
+            }
+          },
+          onAutoplayBlocked({ target }) {
+            if (target !== player) return;
+            if (triedMutedPlayback) {
+              setPlaybackNote('Tap play in the player to start the trailer.');
+              return;
+            }
+            triedMutedPlayback = true;
+            target.mute();
+            target.playVideo();
+          },
+          onError({ target }) {
+            if (target === player) setPlaybackNote('Open the trailer on YouTube or continue to your gift.');
+          }
+        }
+      });
+    }
+
+    function startScreening() {
+      showScene('trailer');
+      triedMutedPlayback = false;
+      setPlaybackNote('');
+
+      // YouTube requires an HTTP referrer for inline playback.
+      if (location.protocol === 'file:') {
+        setPlaybackNote('Use the YouTube link to watch the trailer in this preview.');
+        return;
+      }
+
+      const iframe = document.createElement('iframe');
+      iframe.title = 'The Hunger Games: On Stage trailer';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      const trailerUrl = new URL('https://www.youtube.com/embed/S4MZZHm2nnc');
+      trailerUrl.search = new URLSearchParams({
+        autoplay: '1', playsinline: '1', rel: '0', enablejsapi: '1', origin: location.origin
+      });
+      iframe.src = trailerUrl.href;
+      filmFrame.append(iframe);
+
+      if (window.YT?.Player) {
+        connectPlayer();
+      } else if (!apiScript) {
+        window.onYouTubeIframeAPIReady = connectPlayer;
+        apiScript = document.createElement('script');
+        apiScript.src = 'https://www.youtube.com/iframe_api';
+        apiScript.addEventListener('error', () => {
+          apiScript.remove();
+          apiScript = undefined;
+        });
+        document.head.append(apiScript);
+      }
+    }
+
+    openButton.addEventListener('click', () => {
+      if (landscape.matches) startScreening();
+      else showScene('rotate');
+    });
+    landscape.addEventListener('change', event => {
+      if (event.matches && currentScene === 'rotate') startScreening();
+    });
+    document.querySelector('.watch-portrait').addEventListener('click', startScreening);
+    document.querySelector('.continue-gift').addEventListener('click', revealGift);
+    replayButton.addEventListener('click', () => showScene('sealed'));
+    openButton.hidden = false;
+
+    for (let index = 0; index < 34; index++) {
+      const ember = document.createElement('i');
+      ember.style.setProperty('--x', Math.random() * 100 + '%');
+      ember.style.setProperty('--y', 16 + Math.random() * 92 + '%');
+      ember.style.setProperty('--size', 1 + Math.random() * 2 + 'px');
+      ember.style.setProperty('--delay', -Math.random() * 4 + 's');
+      embers.append(ember);
+    }
+  </script>
+</body>
+</html>
