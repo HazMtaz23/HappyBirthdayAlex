@@ -219,7 +219,53 @@
       font: 400 .95rem/1.4 var(--serif);
     }
     @media (orientation: landscape) {
-      .film-frame { width: min(100%, 70rem, calc((100svh - 5.25rem) * 432 / 187)); }
+      .is-screening .layout {
+        width: 100%;
+        padding: 0;
+      }
+      .screening {
+        position: relative;
+        height: 100vh;
+        height: 100dvh;
+      }
+      .screening h1 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+      .film-frame, .film-frame video {
+        width: 100%;
+        height: 100%;
+      }
+      .film-frame video {
+        border: 0;
+        object-fit: contain;
+      }
+      .screening-actions {
+        position: absolute;
+        inset: max(.5rem, env(safe-area-inset-top)) max(.65rem, env(safe-area-inset-right)) auto max(.65rem, env(safe-area-inset-left));
+        justify-content: flex-end;
+        gap: .5rem;
+        pointer-events: none;
+      }
+      .screening-actions .replay {
+        padding: .4rem .75rem;
+        border: 1px solid var(--line);
+        border-radius: .25rem;
+        background: #080607dc;
+        text-decoration: none;
+        pointer-events: auto;
+      }
+      .playback-note {
+        position: absolute;
+        inset: auto 1rem 4rem;
+        margin: 0;
+        padding: .5rem;
+        background: #080607dc;
+        pointer-events: none;
+      }
     }
     @keyframes pan-in {
       from { opacity: 0; transform: translateX(2.5rem); }
@@ -628,6 +674,7 @@
       clearTimeout(loadingTimer);
       trailer.pause();
       trailer.currentTime = 0;
+      if (document.fullscreenElement === stage) document.exitFullscreen().catch(() => {});
       showScene('gift');
     }
 
@@ -680,7 +727,12 @@
       }
     });
     landscape.addEventListener('change', event => {
-      if (event.matches && currentScene === 'rotate') startScreening();
+      if (!event.matches || currentScene !== 'rotate') return;
+      startScreening();
+      // Rotation can reuse the opening tap's activation while it is still active.
+      if (document.fullscreenEnabled && navigator.userActivation?.isActive) {
+        stage.requestFullscreen().catch(() => {});
+      }
     });
     document.querySelector('.watch-portrait').addEventListener('click', startScreening);
     document.querySelector('.continue-gift').addEventListener('click', revealGift);
