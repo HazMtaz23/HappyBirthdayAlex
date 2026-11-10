@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#1b141e">
+  <meta name="theme-color" content="#131820">
   <meta name="robots" content="noindex, nofollow">
   <title>A Little Birthday Secret</title>
   <meta name="description" content="A little birthday surprise, just for you.">
@@ -39,11 +39,11 @@
       overflow: clip;
     }
     .stage:not(.is-open) {
-      --cream: #f7ecf2;
-      --gold: #f1bfd4;
-      --muted: #d3bbc9;
-      --line: #efb6cf36;
-      background: radial-gradient(ellipse at 73% 42%, #4b2b46, transparent 64%), #1b141e;
+      --cream: #f2eee6;
+      --gold: #dac7a8;
+      --muted: #c4c3c3;
+      --line: #d9c6aa36;
+      background: radial-gradient(ellipse at 73% 42%, #333b4d, transparent 64%), #131820;
     }
 
     .stage::before {
@@ -138,11 +138,11 @@
     .open svg { width: 1.25rem; transition: transform .25s; }
     .open:hover svg { transform: translateX(3px); }
     .sealed .open {
-      background: linear-gradient(115deg, #f9deeb, #dfa6c2);
-      border-color: #f6cfe0;
-      box-shadow: 0 5px 26px #db86b337;
+      background: linear-gradient(115deg, #f0e4d1, #cfb697);
+      border-color: #e9d9c0;
+      box-shadow: 0 5px 26px #b0a28c32;
     }
-    .sealed .open:hover { box-shadow: 0 6px 32px #db86b364; }
+    .sealed .open:hover { box-shadow: 0 6px 32px #b0a28c64; }
 
     .envelope {
       width: min(100%, 540px);
@@ -154,9 +154,9 @@
     .envelope .wax { filter: drop-shadow(0 3px 4px #5c263d74); }
     .envelope .spark { transform-origin: center; animation: glow 3s ease-in-out; }
 
-    .cinema { grid-column: 1 / -1; width: 100%; text-align: center; }
+    .cinema { position: relative; grid-column: 1 / -1; width: 100%; text-align: center; }
     .cinema .eyebrow { justify-content: center; }
-    .rotate-screen, .screening { animation: pan-in .65s cubic-bezier(.2,.7,.2,1) both; }
+    .rotate-screen { animation: pan-in .65s cubic-bezier(.2,.7,.2,1) both; }
     .rotate-screen .intro { margin-inline: auto; }
     .rotate-symbol { width: clamp(6.5rem, 25vw, 10rem); color: var(--gold); margin-bottom: 1.6rem; }
     .rotate-symbol .handset {
@@ -164,9 +164,38 @@
       animation: turn-phone 2.8s ease-in-out;
       transform: rotate(90deg);
     }
-    .stage.is-screening { grid-template-rows: 1fr; background: #080607; }
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: #080607;
+      opacity: 0;
+      transition: opacity .85s ease;
+      pointer-events: none;
+    }
+    .stage.film-visible::after { opacity: 1; }
+    .stage.is-screening { grid-template-rows: 1fr; }
     .is-screening > .rail { display: none; }
     .is-screening .layout { width: min(100% - 1.5rem, 84rem); padding-block: .65rem; }
+    .is-screening .rotate-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      pointer-events: none;
+      animation: none;
+      transition: opacity .55s ease;
+    }
+    .is-screening .rotate-symbol { width: clamp(4rem, 14vh, 6rem); margin-bottom: .65rem; }
+    .is-screening .rotate-screen h1 { font-size: clamp(1.85rem, 7vh, 3.5rem); }
+    .is-screening .rotate-screen .intro { margin: .75rem auto 0; }
+    .is-screening .watch-portrait { display: none; }
+    .screening { opacity: 0; transition: opacity .85s ease .15s; }
+    .film-visible .screening { opacity: 1; }
+    .film-visible .rotate-screen { opacity: 0; }
     .screening h1 {
       margin-bottom: .5rem;
       color: var(--muted);
@@ -175,11 +204,10 @@
       text-transform: uppercase;
     }
     .film-frame { width: min(100%, 70rem); margin-inline: auto; }
-    .film-frame iframe {
+    .film-frame video {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 9;
-      min-height: 200px;
+      aspect-ratio: 432 / 187;
       background: #080607;
       border: 1px solid var(--line);
     }
@@ -191,7 +219,7 @@
       font: 400 .95rem/1.4 var(--serif);
     }
     @media (orientation: landscape) {
-      .film-frame { width: min(100%, 70rem, calc((100svh - 5.25rem) * 16 / 9)); }
+      .film-frame { width: min(100%, 70rem, calc((100svh - 5.25rem) * 432 / 187)); }
     }
     @keyframes pan-in {
       from { opacity: 0; transform: translateX(2.5rem); }
@@ -364,7 +392,7 @@
       .intro { margin-block: .9rem 1.3rem; }
       .ticket-info { text-align: left; }
       .stage { background-position: center top; background-image: radial-gradient(ellipse at 50% 26%, #66251d80, transparent 57%); }
-      .stage:not(.is-open) { background-image: radial-gradient(ellipse at 50% 36%, #4b2b46, transparent 62%); }
+      .stage:not(.is-open) { background-image: radial-gradient(ellipse at 50% 36%, #333b4d, transparent 62%); }
       .rail { padding-block: 1.05rem; }
     }
     @media (max-width: 380px) {
@@ -398,9 +426,9 @@
     <main class="layout">
       <div class="copy">
         <section class="sealed" aria-labelledby="sealed-title">
-          <p class="eyebrow">A little birthday secret</p>
-          <h1 id="sealed-title" tabindex="-1">For you, <em>my love.</em></h1>
-          <p class="intro">Happy birthday. I’ve been keeping a little secret.</p>
+          <p class="eyebrow">Birthday delivery</p>
+          <h1 id="sealed-title" tabindex="-1">Happy <em>birthday.</em></h1>
+          <p class="intro">There’s one more thing to open.</p>
           <noscript><p class="intro">Enable JavaScript to open your surprise.</p></noscript>
           <button class="open" type="button" hidden>
             Open your surprise
@@ -411,7 +439,7 @@
         <section class="reveal" hidden aria-labelledby="reveal-title">
           <p class="eyebrow">Surprise. We’re going to see</p>
           <h1 class="show-title" id="reveal-title" tabindex="-1"><span>The Hunger Games</span><em>On Stage</em></h1>
-          <p class="intro">A night at the theatre in London, just the two of us. Happy birthday, my love.</p>
+          <p class="intro">Two seats for a night at the theatre in London.</p>
           <div class="ticket">
             <div class="ticket-info">
               <span class="ticket-label">Birthday night out</span>
@@ -430,19 +458,19 @@
       <svg class="envelope" viewBox="0 0 520 360" fill="none" aria-hidden="true">
         <defs>
           <linearGradient id="paper" x1="92" y1="73" x2="418" y2="293" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#f7e6dd"/>
-            <stop offset="1" stop-color="#ce9bad"/>
+            <stop stop-color="#f0e7d6"/>
+            <stop offset="1" stop-color="#b8a58a"/>
           </linearGradient>
           <linearGradient id="flap" x1="260" y1="80" x2="260" y2="212" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#fff0e5"/>
-            <stop offset="1" stop-color="#ebc7ce"/>
+            <stop stop-color="#fbf0dd"/>
+            <stop offset="1" stop-color="#d7c6ad"/>
           </linearGradient>
           <radialGradient id="wax" cx=".32" cy=".25" r=".8">
-            <stop stop-color="#c37a98"/>
-            <stop offset="1" stop-color="#763d5c"/>
+            <stop stop-color="#7c879a"/>
+            <stop offset="1" stop-color="#374253"/>
           </radialGradient>
         </defs>
-        <g stroke="#e7aacb" stroke-width="1" opacity=".66">
+        <g stroke="#d4c2a4" stroke-width="1" opacity=".66">
           <path d="M44 139V75a18 18 0 0 1 18-18h66m264 0h66a18 18 0 0 1 18 18v64m0 82v64a18 18 0 0 1-18 18h-66m-264 0H62a18 18 0 0 1-18-18v-64" stroke-opacity=".48"/>
           <path class="spark" d="M64 85v-24m-12 12h24m388 206v-24m-12 12h24M451 96V82m-7 7h14M73 268v-14m-7 7h14"/>
         </g>
@@ -454,7 +482,7 @@
           <g class="wax">
             <path d="M260 182c7-1 11 3 17 6s9 8 9 16-1 13-6 19-10 10-18 10-15-2-21-7-8-10-8-18 2-16 8-20 12-5 19-6Z" fill="url(#wax)" stroke="#e1a4bc" stroke-opacity=".58"/>
             <circle cx="260" cy="208" r="18" stroke="#e4a3bf" stroke-opacity=".72"/>
-            <path d="M260 215c-3-2-9-6-9-10 0-5 6-6 9-2 3-4 9-3 9 2 0 4-6 8-9 10Z" fill="#f4cbda"/>
+            <path d="m260 199 9 9-9 9-9-9Z" fill="none" stroke="#e9ddc6" stroke-width="1.5"/>
           </g>
         </g>
       </svg>
@@ -510,7 +538,7 @@
             <circle cx="64" cy="64" r="59" opacity=".25" stroke-dasharray="1 5"/>
             <path d="M22 46a45 45 0 0 1 68-19m-2-10 4 12-12 3M106 82a45 45 0 0 1-68 19m2 10-4-12 12-3" opacity=".7" stroke-linecap="round" stroke-linejoin="round"/>
             <g class="handset">
-              <rect x="45" y="32" width="38" height="64" rx="6" fill="#382237"/>
+              <rect x="45" y="32" width="38" height="64" rx="6" fill="#303848"/>
               <path d="M59 39h10m-12 50h14" stroke-linecap="round"/>
               <path d="m64 55 8 8-8 8-8-8z" fill="currentColor" stroke="none"/>
             </g>
@@ -522,11 +550,13 @@
         </section>
 
         <section class="screening" hidden aria-labelledby="screening-title">
-          <h1 id="screening-title" tabindex="-1">Your private screening</h1>
-          <div class="film-frame"></div>
+          <h1 id="screening-title" tabindex="-1">Private screening</h1>
+          <div class="film-frame">
+            <video controls playsinline preload="none" src="trailer.mp4" aria-label="Trailer"></video>
+          </div>
           <p class="playback-note" role="status" hidden></p>
           <div class="screening-actions">
-            <a class="replay" href="https://www.youtube.com/watch?v=S4MZZHm2nnc" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+            <button class="replay enable-sound" type="button" hidden>Turn on sound</button>
             <button class="replay continue-gift" type="button">Continue to your gift →</button>
           </div>
         </section>
@@ -534,7 +564,7 @@
     </main>
 
     <footer class="rail">
-      <span>For your eyes only</span>
+      <span>Birthday dispatch</span>
       <span class="dispatch-state" aria-hidden="true">01 / Sealed</span>
     </footer>
   </div>
@@ -554,22 +584,25 @@
     const cinema = document.querySelector('.cinema');
     const rotateScreen = document.querySelector('.rotate-screen');
     const screening = document.querySelector('.screening');
-    const filmFrame = document.querySelector('.film-frame');
+    const trailer = document.querySelector('.film-frame video');
+    const soundButton = document.querySelector('.enable-sound');
     const playbackNote = document.querySelector('.playback-note');
     const landscape = matchMedia('(orientation: landscape)');
     const scenes = { sealed, rotate: rotateScreen, trailer: screening, gift: reveal };
     let currentScene = 'sealed';
-    let player;
-    let apiScript;
-    let triedMutedPlayback = false;
+    let playbackAttempt = 0;
+    let loadingTimer;
 
     function showScene(scene) {
+      const leavingPrompt = currentScene === 'rotate' && scene === 'trailer';
       currentScene = scene;
       const gift = scene === 'gift';
       const inCinema = scene === 'rotate' || scene === 'trailer';
       for (const [name, panel] of Object.entries(scenes)) {
         panel.hidden = name !== scene;
       }
+      rotateScreen.hidden = scene !== 'rotate' && !leavingPrompt;
+      rotateScreen.inert = leavingPrompt;
       copy.hidden = inCinema;
       cinema.hidden = !inCinema;
       envelope.toggleAttribute('hidden', scene !== 'sealed');
@@ -578,9 +611,10 @@
       status.hidden = !gift;
       stage.classList.toggle('is-open', gift);
       stage.classList.toggle('is-screening', scene === 'trailer');
+      stage.classList.remove('film-visible');
       dispatchState.textContent = gift ? '03 / Unsealed' : inCinema ? '02 / Screening' : '01 / Sealed';
 
-      scenes[scene].querySelector('h1').focus({ preventScroll: true });
+      if (scene !== 'trailer') scenes[scene].querySelector('h1').focus({ preventScroll: true });
       window.scrollTo(0, 0);
     }
 
@@ -590,91 +624,80 @@
     }
 
     function revealGift() {
+      playbackAttempt++;
+      clearTimeout(loadingTimer);
+      trailer.pause();
+      trailer.currentTime = 0;
       showScene('gift');
-      player?.destroy();
-      player = undefined;
-      filmFrame.replaceChildren();
     }
 
-    function connectPlayer() {
-      const iframe = filmFrame.querySelector('iframe');
-      if (!iframe || player) return;
+    function showFilm() {
+      if (stage.classList.contains('film-visible')) return;
+      stage.classList.add('film-visible');
+      screening.inert = false;
+      screening.querySelector('h1').focus({ preventScroll: true });
+    }
 
-      player = new window.YT.Player(iframe, {
-        events: {
-          onReady({ target }) {
-            if (target === player) target.playVideo();
-          },
-          onStateChange({ target, data }) {
-            if (target !== player) return;
-            if (data === window.YT.PlayerState.ENDED) revealGift();
-            if (data === window.YT.PlayerState.PLAYING) {
-              setPlaybackNote(target.isMuted() ? 'Tap the speaker in the player for sound.' : '');
-            }
-          },
-          onAutoplayBlocked({ target }) {
-            if (target !== player) return;
-            if (triedMutedPlayback) {
-              setPlaybackNote('Tap play in the player to start the trailer.');
-              return;
-            }
-            triedMutedPlayback = true;
-            target.mute();
-            target.playVideo();
-          },
-          onError({ target }) {
-            if (target === player) setPlaybackNote('Open the trailer on YouTube or continue to your gift.');
+    async function startScreening() {
+      const attempt = ++playbackAttempt;
+      screening.inert = true;
+      trailer.muted = false;
+      soundButton.hidden = true;
+      showScene('trailer');
+      setPlaybackNote('');
+      loadingTimer = setTimeout(() => {
+        setPlaybackNote('Loading trailer…');
+        showFilm();
+      }, 3500);
+
+      try {
+        await trailer.play();
+      } catch (error) {
+        if (attempt !== playbackAttempt) return;
+        if (error.name === 'NotAllowedError') {
+          trailer.muted = true;
+          try {
+            await trailer.play();
+          } catch {
+            if (attempt !== playbackAttempt) return;
+            trailer.muted = false;
           }
         }
-      });
-    }
-
-    function startScreening() {
-      showScene('trailer');
-      triedMutedPlayback = false;
-      setPlaybackNote('');
-
-      // YouTube requires an HTTP referrer for inline playback.
-      if (location.protocol === 'file:') {
-        setPlaybackNote('Use the YouTube link to watch the trailer in this preview.');
-        return;
       }
-
-      const iframe = document.createElement('iframe');
-      iframe.title = 'The Hunger Games: On Stage trailer';
-      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-      iframe.allowFullscreen = true;
-      const trailerUrl = new URL('https://www.youtube.com/embed/S4MZZHm2nnc');
-      trailerUrl.search = new URLSearchParams({
-        autoplay: '1', playsinline: '1', rel: '0', enablejsapi: '1', origin: location.origin
-      });
-      iframe.src = trailerUrl.href;
-      filmFrame.append(iframe);
-
-      if (window.YT?.Player) {
-        connectPlayer();
-      } else if (!apiScript) {
-        window.onYouTubeIframeAPIReady = connectPlayer;
-        apiScript = document.createElement('script');
-        apiScript.src = 'https://www.youtube.com/iframe_api';
-        apiScript.addEventListener('error', () => {
-          apiScript.remove();
-          apiScript = undefined;
-        });
-        document.head.append(apiScript);
-      }
+      if (attempt !== playbackAttempt) return;
+      clearTimeout(loadingTimer);
+      soundButton.hidden = !trailer.muted;
+      setPlaybackNote(trailer.error ? 'The trailer couldn’t load. You can still open your gift.' :
+        trailer.paused ? 'Tap play to start the trailer.' : '');
+      showFilm();
     }
 
     openButton.addEventListener('click', () => {
       if (landscape.matches) startScreening();
-      else showScene('rotate');
+      else {
+        trailer.preload = 'auto';
+        showScene('rotate');
+      }
     });
     landscape.addEventListener('change', event => {
       if (event.matches && currentScene === 'rotate') startScreening();
     });
     document.querySelector('.watch-portrait').addEventListener('click', startScreening);
     document.querySelector('.continue-gift').addEventListener('click', revealGift);
+    soundButton.addEventListener('click', () => {
+      trailer.muted = false;
+      trailer.focus();
+    });
+    trailer.addEventListener('volumechange', () => {
+      soundButton.hidden = !trailer.muted;
+    });
+    trailer.addEventListener('playing', () => setPlaybackNote(''));
+    trailer.addEventListener('error', () => {
+      if (currentScene === 'trailer') setPlaybackNote('The trailer couldn’t load. You can still open your gift.');
+    });
+    trailer.addEventListener('ended', () => {
+      if (currentScene === 'trailer') revealGift();
+    });
     replayButton.addEventListener('click', () => showScene('sealed'));
     openButton.hidden = false;
 
